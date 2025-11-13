@@ -34,7 +34,8 @@ function display_404(url: string) {
 const getApis = {
 	"/books": api.listBooks,
 	"/patrons": api.listPatrons,
-	"/book": api.getBook
+	"/book": api.getBook,
+	"/patron": api.getPatron
 }
 
 const postApis = {

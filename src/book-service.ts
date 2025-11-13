@@ -3,7 +3,7 @@ import { BookRepository } from "./book-repository.js";
 
 const bookRepository: BookRepository = new BookRepository();
 
-export function listBooks(): Book[] {
+export function listBooks(): Promise<Book[]> {
 	return bookRepository.findAll();
 }
 

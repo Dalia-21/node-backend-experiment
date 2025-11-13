@@ -5,13 +5,21 @@ const dbName: string = "./book.db";
 
 export class BookRepository {
 
-	findAll(): Book[] {
-		return new Array();
+	async findAll(): Promise<Book[]> {
+		try {
+			const books: Book[] = new Array();
+			const db: fs.FileHandle = await fs.open(dbName, 'r');
+			for await (const line of db.readLines()) {
+				books.push(JSON.parse(line));
+			}
+			return books;
+		} catch(error) {
+			console.error("An error occurred while reading db:", error.message);
+		}
 	}
 
 	async findByTitle(title: string): Promise<Book> {
 		try {
-			const books: Book[] = new Array();
 			const db: fs.FileHandle = await fs.open(dbName, 'r');
 			for await (const line of db.readLines()) {
 				const book: Book = JSON.parse(line);
