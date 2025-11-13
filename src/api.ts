@@ -20,6 +20,10 @@ export function createBook(data: string) {
 	bookService.createBook(data);
 }
 
+export function updateBook(data: string) {
+	bookService.updateBook(data);
+}
+
 export function listPatrons() {
 	patronService.listPatrons().then((patrons) => {
 		for (const patron of patrons) {

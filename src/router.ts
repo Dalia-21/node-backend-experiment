@@ -22,6 +22,8 @@ export function routePostRequest(url: string, data: string) {
 	console.log("Received url:", url, "and data:", data);
 	if (postApis.hasOwnProperty(url)) {
 		postApis[url](data);
+	} else if (postApis.hasOwnProperty('/' + url.split('/')[1])) {
+		postApis['/' + url.split('/')[1]](data);
 	} else {
 		display_404(url);
 	}
@@ -40,6 +42,7 @@ const getApis = {
 
 const postApis = {
 	"/books": api.createBook,
-	"/patrons": api.createPatron
+	"/patrons": api.createPatron,
+	"/book": api.updateBook,
 }
 
