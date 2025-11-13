@@ -2,5 +2,5 @@
 	"compilerOptions": {
 		"module": "nodenext",
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*"],
 }

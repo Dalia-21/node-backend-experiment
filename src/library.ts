@@ -1,24 +1,40 @@
 #!/usr/bin/env node
 import yargs from 'yargs';
-import { route } from "./router.js";
+import { hideBin } from 'yargs/helpers';
+import { routeGetRequest, routePostRequest } from "./router.js";
 
-const argv = yargs(process.argv)
+const argv = yargs(hideBin(process.argv))
+	.option('method', {
+		alias: 'm',
+		type: 'string',
+		description: 'request method',
+		demandOption: true
+	})
 	.option('url', {
 		alias: 'u',
 		type: 'string',
-		description: 'request url'
+		description: 'request url',
+		demandOption: true
+	})
+	.option('data', {
+		alias: 'd',
+		type: 'string',
+		description: 'request body',
+		demandOption: false
 	})
 	.parseSync();
 
-
-if (urlIsWellformed(argv.url)) {
-	// Execute call to router
-	route(argv.url);
+if (argv.url && isValidUrl(argv.url)) {
+	if (argv.method === 'get') {
+		routeGetRequest(argv.url);
+	} else if (argv.method === 'post') {
+		routePostRequest(argv.url, argv.data);
+	}
 } else {
-	console.error(`Malformed url provided: ${argv.url}`);
+	console.error("Malformed URL provided:", argv.url);
 }
 
-function urlIsWellformed(url: string): boolean {
+function isValidUrl(url: string): boolean {
 	if (!url || url.charAt(0) !== '/') {
 		return false;
 	}
