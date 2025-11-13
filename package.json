@@ -1,0 +1,10 @@
+{
+	"type": "module",
+	"devDependencies": {
+    "@types/node": "^24.10.1"
+  },
+  "dependencies": {
+    "@types/yargs": "^17.0.34",
+    "yargs": "^18.0.0"
+  }
+}
