@@ -4,11 +4,11 @@ export interface Book {
 	borrowed: boolean;
 	publicationDate: Date;
 	dueDate: Date;
-	borrower: Patron;
+	borrower: string;
 }
 
 export interface Patron {
 	name: string;
 	age: number;
-	borrowedBooks: Book[];
+	borrowedBooks: string[];
 }

@@ -46,37 +46,38 @@ export class BookRepository {
 		}
 	}
 
+	// Obviously life would be so much easier if I fixed field lengths
 	async update(newRecord: Book) {
 		try {
 			let db: fs.FileHandle = await fs.open(dbName, 'r');
-			const books: Book[] = new Array();
+			let book: Book = null;
+			const updatedBooks: string[] = new Array();
+			updatedBooks.push(JSON.stringify(newRecord));
+			
+			let filePos: number = 0;
+			let recordFound = false;
 			for await (const line of db.readLines()) {
-				books.push(JSON.parse(line));
-			}
-			db.close();
-			let i: number = 0;
-			for (const book of books) {
-				if (book.title === newRecord.title) {
-					break;
+				book = JSON.parse(line);
+				
+				if (!recordFound && book.title === newRecord.title) { // found record line in db
+					recordFound = true;
+				} else {
+					if (recordFound) { // already found record: push all subsequent records
+						updatedBooks.push(JSON.stringify(book));
+					} else { // record not yet found
+						filePos += line.length;
+					}
 				}
-				i++;
+			
 			}
-			if (i === books.length) {
-				console.error("Record", newRecord.title, "not found for update");
-				return;
-			}
-			books.splice(i, 1, newRecord);
-			db = await fs.open(dbName, 'w');
-			let booksStringList: string[] = new Array();
-			for (const book of books) {
-				booksStringList.push(JSON.stringify(book));
-			}
-			// This is obviously an insane way to maintain a database
-			// It's been fun to implement, and I could optimise it by trying to
-			// write single records in place, but professional databases
-			// exist for a reason...
-			await db.writeFile(booksStringList.join("\n"));
+			filePos += 2; // Increment by one for the newline after previous line and one for start pos
 			db.close();
+			
+			fs.truncate(dbName, filePos); // trim file to only include records above updated one
+			db = await fs.open(dbName, 'a');
+			db.appendFile(updatedBooks.join("\n"));
+			db.close();
+		
 		} catch(error) {
 			console.error("An error occurred while updating", newRecord, ":", error.message);
 		}

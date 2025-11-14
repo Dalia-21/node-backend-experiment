@@ -12,16 +12,33 @@ export function listBooks() {
 
 export function getBook(title: string) {
 	bookService.getBook(title).then((book) => {
-		console.log("Book found:", book);
+		if (book === null) {
+			console.log("No book found with title:", title);
+		} else {
+			console.log("Found book", book);
+		}
 	});
 }
 
 export function createBook(data: string) {
-	bookService.createBook(data);
+	bookService.createBook(JSON.parse(data));
+	console.log("Book created");
 }
 
-export function updateBook(data: string) {
-	bookService.updateBook(data);
+export function updateBook(title: string, data: string) {
+	bookService.updateBook(title, JSON.parse(data));
+}
+
+export function borrowBook(title: string, patronName: string) {
+	patronService.borrowBook(title, patronName);
+	bookService.borrowBook(title, patronName);
+	console.log("Book", title, "loaned successfully");
+}
+
+export function returnBook(title: string) {
+	patronService.returnBook(title);
+	bookService.returnBook(title);
+	console.log("Book", title, "returned successfully");
 }
 
 export function listPatrons() {
@@ -33,12 +50,20 @@ export function listPatrons() {
 }
 
 export function createPatron(data: string) {
-	patronService.createPatron(data);
+	patronService.createPatron(JSON.parse(data));
 }
 
 export function getPatron(name: string) {
 	patronService.getPatron(name).then((patron) => {
-		console.log("Patron found:", patron);
+		if (patron === null) {
+			console.log("No patron found with name:", patron);
+		} else {
+			console.log("Patron found:", patron);
+		}
 	});
+}
+
+export function updatePatron(name: string, data: string) {
+	patronService.updatePatron(name, JSON.parse(data));
 }
 

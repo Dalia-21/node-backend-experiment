@@ -1,48 +1,54 @@
 import * as api from "./api.js";
 
 export function routeGetRequest(url: string) {
-	console.log("Received:", url);
-	if (getApis.hasOwnProperty(url)) {
-		getApis[url]();
-	} else if (getApis.hasOwnProperty('/' + url.split('/')[1])) {
-		getApis['/' + url.split('/')[1]](url.split('/')[2]);
-		/* 
-		 * This is a hack which splits the first part of the url before
-		 * the second slash and compares it to the api structure.
-		 * It only supports one path variable in the second position.
-		 * Proper path variable parsing would be needed to advance 
-		 * beyond this point.
-		 */
+	const basePath: string = url.split('/')[1];
+	const pathVariables: string[] = getPathVariables(url);
+	if (basePath === "books") {
+		api.listBooks();
+	} else if (basePath === "book") {
+		api.getBook(pathVariables[0]);
+	} else if (basePath === "patrons") {
+		api.listPatrons();
+	} else if (basePath === "patron") {
+		api.getPatron(pathVariables[0]);
 	} else {
 		display_404(url);
 	}
 }
 
 export function routePostRequest(url: string, data: string) {
-	console.log("Received url:", url, "and data:", data);
-	if (postApis.hasOwnProperty(url)) {
-		postApis[url](data);
-	} else if (postApis.hasOwnProperty('/' + url.split('/')[1])) {
-		postApis['/' + url.split('/')[1]](data);
+	const basePath: string = url.split('/')[1];
+	const pathVariables: string[] = getPathVariables(url);
+	if (basePath === "books") {
+		api.createBook(data);
+	} else if (basePath === "book") { // These cases need error checking for url length too
+		api.updateBook(pathVariables[0], data);		
+	} else if (basePath === "patrons") {
+		api.createPatron(data);
+	} else if (basePath === "patron") {
+		api.updatePatron(pathVariables[0], data);
+	} else if (basePath === "borrow") {
+		if (pathVariables.length !== 3) {
+			throw new Error("Borrow path is /borrow/{title}/patron/{name}");
+		}
+		api.borrowBook(pathVariables[0], pathVariables[2]);
+	} else if (basePath === "return") {
+		api.returnBook(pathVariables[0]);
 	} else {
 		display_404(url);
 	}
 }
 
+function getPathVariables(url: string): string[] {
+	let tmp: string[] = url.split('/');
+	if (tmp.length > 2) { // "/books".split('/') will have length 2
+		return tmp.slice(2);
+	} else {
+		return new Array();
+	}
+}
+
 function display_404(url: string) {
 	console.error("Url", url, "not found");
-}
-
-const getApis = {
-	"/books": api.listBooks,
-	"/patrons": api.listPatrons,
-	"/book": api.getBook,
-	"/patron": api.getPatron
-}
-
-const postApis = {
-	"/books": api.createBook,
-	"/patrons": api.createPatron,
-	"/book": api.updateBook,
 }
 
