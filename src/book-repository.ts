@@ -65,12 +65,11 @@ export class BookRepository {
 					if (recordFound) { // already found record: push all subsequent records
 						updatedBooks.push(JSON.stringify(book));
 					} else { // record not yet found
-						filePos += line.length;
+						filePos += line.length + 1; // Add newline back in after readLines() strips it out
 					}
 				}
 			
 			}
-			filePos += 1; // Increment by one for the newline after previous line and one for start pos
 			db.close();
 			
 			fs.truncate(dbName, filePos); // trim file to only include records above updated one
