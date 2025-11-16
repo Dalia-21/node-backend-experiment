@@ -20,13 +20,16 @@ export function getBook(title: string) {
 	});
 }
 
-export function createBook(data: string) {
+export function createBook(data: string) { // Need to await
 	bookService.createBook(JSON.parse(data));
 	console.log("Book created");
 }
 
-export function updateBook(title: string, data: string) {
-	bookService.updateBook(title, JSON.parse(data));
+export function updateBook(title: string, data: string) { // Need to await
+	bookService.updateBook(title, JSON.parse(data))
+		.catch((error: Error) => {
+			console.error(error.message);
+	});;
 }
 
 export function borrowBook(title: string, patronName: string) {

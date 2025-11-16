@@ -70,12 +70,12 @@ export class BookRepository {
 				}
 			
 			}
-			filePos += 2; // Increment by one for the newline after previous line and one for start pos
+			filePos += 1; // Increment by one for the newline after previous line and one for start pos
 			db.close();
 			
 			fs.truncate(dbName, filePos); // trim file to only include records above updated one
 			db = await fs.open(dbName, 'a');
-			db.appendFile(updatedBooks.join("\n"));
+			await db.appendFile(updatedBooks.join("\n"));
 			db.close();
 		
 		} catch(error) {
