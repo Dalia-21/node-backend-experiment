@@ -70,12 +70,12 @@ export class BookRepository {
 				}
 			
 			}
-			db.close();
+			await db.close();
 			
-			fs.truncate(dbName, filePos); // trim file to only include records above updated one
+			await fs.truncate(dbName, filePos); // trim file to only include records above updated one
 			db = await fs.open(dbName, 'a');
 			await db.appendFile(updatedBooks.join("\n"));
-			db.close();
+			await db.close();
 		
 		} catch(error) {
 			console.error("An error occurred while updating", newRecord, ":", error.message);
